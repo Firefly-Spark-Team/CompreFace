@@ -21,9 +21,16 @@ COPY --from=build /usr/src/app/dist/compreface /usr/share/nginx/html
 
 # Use project Nginx configuration
 RUN rm /etc/nginx/conf.d/default.conf
-COPY --from=build /usr/src/app/nginx/ /etc/nginx/
+ARG APP_DIR=ui
+COPY ${APP_DIR}/nginx/ /etc/nginx/
+
+# Sensible defaults; override in deployment
+ENV CLIENT_MAX_BODY_SIZE=10M \
+    PROXY_READ_TIMEOUT=60000ms \
+    PROXY_CONNECT_TIMEOUT=10000ms \
+    ADMIN_BASE=http://compreface-admin:8080 \
+    API_BASE=http://compreface-api:8080 \
+    CORE_BASE=http://compreface-core:3000
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
-
-
