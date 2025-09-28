@@ -3,13 +3,14 @@
 # --- Build stage ---
 FROM node:14 AS build
 WORKDIR /usr/src/app
+ARG APP_DIR=ui
 
 # Install dependencies first (better layer caching)
-COPY package.json ./
+COPY ${APP_DIR}/package.json ./
 RUN npm install
 
 # Copy source and build
-COPY . .
+COPY ${APP_DIR}/ .
 RUN npm run build:prod
 
 # --- Runtime stage ---
